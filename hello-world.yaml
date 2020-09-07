@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+spec:
+  selector:
+    matchLabels:
+      run: load-balancer-example
+      app: hello-world
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: load-balancer-example
+        app: hello-world
+    spec:
+      containers:
+        - name: hello-world
+          image: gcr.io/google-samples/node-hello:1.0
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-service
+  annotations:
+        service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+spec:
+  selector:
+    app: hello-world
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 10.0.0.23
