@@ -8,6 +8,8 @@ spec:
     matchLabels:
       app: hello-kubernetes-custom
   template:
+  spec:
+    hostNetwork: true
     metadata:
       labels:
         app: hello-kubernetes-custom
